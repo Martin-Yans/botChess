@@ -63,7 +63,7 @@ def movePriority(board, move):
     if board.is_check():
         score += 10
     if board.is_checkmate():
-        score += 99999
+        score += 999
     board.pop()
 
     return score

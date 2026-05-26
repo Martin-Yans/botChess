@@ -1,4 +1,7 @@
 #pip install python-chess
+import random
+import time
+
 import chess
 import math
 from evaluationChess import getCaseEvaluation, getBoardEvaluation, getPositionEvaluation, miniMax
@@ -22,20 +25,31 @@ def deplacement(move):
 
 
 
-def botMove(depth):
-    best_move = None
-    best_score = -99999
+def botMove(depth, color):
+    best_move = random.choice(list(board.legal_moves))
+    best_score = math.inf
+
+
+    if color == chess.WHITE :
+        best_score = -math.inf
+        
 
     for move in list(board.legal_moves):
 
         board.push(move)
-        score = miniMax(board, depth - 1, False)
+        score = miniMax(board, depth - 1, not color)
         board.pop()
 
 
-        if score > best_score :
+        if color == chess.BLACK and score < best_score :
             best_score = score
             best_move = move
+        
+        if color == chess.WHITE and score > best_score :
+            best_score = score
+            best_move = move
+
+        
         
     return best_move
 
@@ -50,28 +64,22 @@ while not board.is_game_over() :
     print(board)
     if board.turn == chess.WHITE:
         print("white turn")
-        
-        move = input("piece move : ")
-        
-        if (move == 'exit') : break
 
-        try :
-            moveObj = chess.Move.from_uci(move)
-        except:
-            print("format invalid")
+        move = botMove(3, chess.WHITE)
+
+        if not deplacement(move):
             continue
 
-        if not deplacement(moveObj):
-            continue
-
+    
+    
 
     print(getPositionEvaluation(board))
     print(board)
-    
+    time.sleep(1)
 
     print("black turn")
     
-    move = botMove(5)
+    move = botMove(3, chess.BLACK)
 
     print(move)
 
@@ -79,5 +87,17 @@ while not board.is_game_over() :
         continue
 
     print(getPositionEvaluation(board))
+    print(board)
 
+    time.sleep(1)
+
+
+def inputMove(): 
+            
+        move = input("piece move : ")
         
+
+        try :
+            moveObj = chess.Move.from_uci(move)
+        except:
+            print("format invalid")
